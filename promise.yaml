@@ -1,0 +1,51 @@
+apiVersion: platform.kratix.io/v1alpha1
+kind: Promise
+metadata:
+  name: nginx-promise
+  namespace: default
+spec:
+  api:
+    apiVersion: apiextensions.k8s.io/v1
+    kind: CustomResourceDefinition
+    metadata:
+      name: nginx.sample.promise.kratix.io
+    spec:
+      group: sample.promise.kratix.io
+      names:
+        kind: nginx
+        plural: nginx
+        singular: nginx
+      scope: Namespaced
+      versions:
+        - name: v1alpha1
+          schema:
+            openAPIV3Schema:
+              type: object
+              properties:
+                spec:
+                  type: object
+                  properties:
+                    namespace:
+                      description: namespace
+                      type: string
+                    url:
+                      description: URL of github repo to the .html file
+                      type: string
+                  required:
+                    - namespace
+                    - url
+          served: true
+          storage: true
+  workflows:
+    resource:
+      configure:
+        - apiVersion: platform.kratix.io/v1alpha1
+          kind: Pipeline
+          metadata:
+            name: instance-configure 
+            namespace: default
+          spec:
+            containers:
+              - image: nginx-pipeline:dev
+                name: nginx-configure-pipeline
+

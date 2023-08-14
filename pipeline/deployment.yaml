@@ -1,0 +1,36 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: nginx-github
+  namespace: default  # Add the namespace here
+  labels:
+    app: nginx-github
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: nginx-github
+  template:
+    metadata:
+      labels:
+        app: nginx-github
+    spec:
+      volumes:
+      - name: html-content
+        emptyDir: {}
+      initContainers:
+      - name: download-content
+        image: appropriate/curl
+        command: ["sh", "-c", "curl -o /html/index.html REPLACE_URL_PLACEHOLDER"]
+        volumeMounts:
+        - name: html-content
+          mountPath: /html
+      containers:
+      - name: nginx
+        image: nginx:alpine
+        ports:
+        - containerPort: 80
+        volumeMounts:
+        - name: html-content
+          mountPath: /usr/share/nginx/html
+

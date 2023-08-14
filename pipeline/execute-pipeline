@@ -1,0 +1,12 @@
+#!/bin/sh
+
+# Extract the URL value from input/objects.yaml
+URL=$(yq e '.spec.url' /input/object.yaml)
+#echo $URL
+# Replace the URL in the deployment.yaml using yq
+yq e ".spec.template.spec.initContainers[0].command[2] |= sub(\"REPLACE_URL_PLACEHOLDER\"; \"$URL\")" /workdir/deployment.yaml > /output/deployment.yaml
+
+#cat /kratix/output/deployment.yaml
+# Copy the service.yaml to the output directory (as it remains unchanged)
+cp /workdir/service.yaml /output/service.yaml
+

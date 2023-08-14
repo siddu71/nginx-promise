@@ -1,0 +1,34 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: nginx-github
+  labels:
+    app: nginx-github
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: nginx-github
+  template:
+    metadata:
+      labels:
+        app: nginx-github
+    spec:
+      volumes:
+        - name: html-content
+          emptyDir: {}
+      initContainers:
+        - name: download-content
+          image: appropriate/curl
+          command: ["sh", "-c", "curl -o /html/index.html https://raw.githubusercontent.com/siddu71/nginx-test/main/index.html"]
+          volumeMounts:
+            - name: html-content
+              mountPath: /html
+      containers:
+        - name: nginx
+          image: nginx:alpine
+          ports:
+            - containerPort: 80
+          volumeMounts:
+            - name: html-content
+              mountPath: /usr/share/nginx/html

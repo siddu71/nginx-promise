@@ -1,0 +1,8 @@
+apiVersion: sample.promise.kratix.io/v1alpha1
+kind: nginx
+metadata:
+  name: nginx-promise
+  namespace: default
+spec:
+  url: https://raw.githubusercontent.com/siddu71/nginx-test/main/index.html
+  namespace: default

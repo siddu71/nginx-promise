@@ -1,0 +1,22 @@
+#!/usr/bin/env bash
+
+# Set the script directory
+scriptsdir=$(cd "$(dirname "$0")"; pwd)
+echo "scriptsdir value: $scriptsdir"
+# Set the test directory
+testdir=$(cd "$(dirname "$0")"/../test; pwd)
+echo "testdir value: $testdir"
+# Define directories for input, output, and metadata
+inputDir="$testdir/input"
+outputDir="$testdir/output"
+metadataDir="$testdir/metadata"
+echo "outputDir value: $outputDir"
+# Build the pipeline image
+$scriptsdir/build-pipeline
+
+# Clear the output directory
+rm $outputDir/*
+
+# Run the Docker container for your NGINX promise
+docker run --rm -it --volume ${outputDir}:/kratix/output --volume ${inputDir}:/kratix/input --volume ${metadataDir}:/kratix/metadata nginx-pipeline:dev 
+

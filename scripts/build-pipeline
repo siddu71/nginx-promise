@@ -1,0 +1,13 @@
+#!/usr/bin/env bash
+
+set -eu -o pipefail
+
+# Assuming your pipeline is in the root of your project directory
+projectdir=$(cd "$(dirname "$0")"/..; pwd)
+
+# Building the Docker image with the root directory as the build context
+docker build -f $projectdir/pipeline/Dockerfile --tag nginx-pipeline:dev $projectdir
+
+# Loading the Docker image into the minikube cluster named "platform"
+#minikube -p kind-platform image load nginx-pipeline:dev
+
